@@ -34,10 +34,6 @@ editor.addEventListener('keydown', function(e) {
 	}
 });
 
-//const IFELSE = /\\IF\s*\{([^}]+\})\s*\\STATE\s*\{([^}]+\})\s*\\ELSE\s*\\STATE\s*\{([^}]+\})\s*\\ENDIF/g;
-const VARIABLEX = /x/g;
-const ADDITION = /\s*x\s*\+\s*x\s*/g;
-
 
 function parserToHtml(text) {
 	var lines = text.split('\n');
@@ -45,6 +41,7 @@ function parserToHtml(text) {
 	if (body !== null) {
 		body.remove();
 	}
+
 	var result = "<div id=\"pseudocode-body\">";
 
 	for(var i = 0; i < lines.length; i++)
@@ -66,16 +63,20 @@ function parserToHtml(text) {
 	return result;
 }
 
+//const IFELSE = /\\IF\s*\{([^}]+\})\s*\\STATE\s*\{([^}]+\})\s*\\ELSE\s*\\STATE\s*\{([^}]+\})\s*\\ENDIF/g;
+const VARIABLEX = /x/g;
+const ADDITION = /\s*x\s*\+\s*x\s*\+\s*(\d)*\s*=\s*0\s*/g;
+const SPACE = /\s*/g;
+
 function parser(expression) {
 	var result = "";
 
 	if (expression.match(ADDITION)) {
 		try {
-			var variables = expression.split(ADDITION);
-			for (var i = 0; i < variables.length - 1; i++)
-			{
-				result += "2x ";
-			}
+			var variables = expression.split(SPACE);
+			var constant = variables[5];
+			var solution = solve(variables.length-1, constant);
+			result += solution[0] + ", " + solution[1];
 			result += "\n";
 		}
 		catch {
@@ -88,3 +89,32 @@ function parser(expression) {
 function clean(expression) {
 	return expression.replace("\{", "").replace("\}", "");
 }
+
+function solve(count, constant) {
+	var xl = -100;
+	var xr = 100;
+	var epsilon = 0.5;
+	var left = 2*xl + constant;
+	var right = 2*xr + constant;
+
+	while (left <= epsilon && epsilon <= right)
+	{
+		if (left <= -1 * epsilon)
+		{
+			xl /= 2;
+			left = 2*xl + constant;
+		}
+		else if (epsilon <= right)
+		{
+			xr /= 2;
+			right = 2*xr + constant;
+		}
+		else
+		{
+			return [(left - constant)/2, (right - constant)/2];
+		}
+	}
+
+	return [(left - constant)/2, (right - constant)/2];
+}
+
