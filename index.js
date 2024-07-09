@@ -34,32 +34,10 @@ editor.addEventListener('keydown', function(e) {
 	}
 });
 
-const STATE = /\\STATE/g;
-const IF = /\\IF/g;
-const IFELSE = /\\IF\s*\{([^}]+\})\s*\\STATE\s*\{([^}]+\})\s*\\ELSE\s*\\STATE\s*\{([^}]+\})\s*\\ENDIF/g;
-const ELSE = /\\ELSE/g;
-const ELSIF = /\\ELSIF/g;
-const ENDIF = /\\ENDIF/g;
-const FOR = /\\FOR/g;
-const ENDFOR = /\\ENDFOR/g;
-const FORALL = /\\FORALL/g;
-const WHILE = /\\WHILE/g;
-const REPEAT = /\\REPEAT/g;
-const LOOP = /\\LOOP/g;
-const ENDLOOP = /\\ENDLOOP/g;
-const REQUIRE = /\\REQUIRE/g;
-const ENSURE = /\\ENSURE/g;
-const RETURN = /\\RETURN/g;
-const PRINT = /\\PRINT/g;
-const COMMENT = /\\COMMENT/g;
-const AND = /\\AND/g;
-const OR = /\\OR/g;
-const XOR = /\\XOR/g;
-const NOT = /\\NOT/g;
-const TO = /\\TO/g;
-const TRUE = /\\TRUE/g;
-const FALSE = /\\FALSE/g;
-const CURLY = /\{([^}]+\})/g;
+//const IFELSE = /\\IF\s*\{([^}]+\})\s*\\STATE\s*\{([^}]+\})\s*\\ELSE\s*\\STATE\s*\{([^}]+\})\s*\\ENDIF/g;
+const VARIABLEX = /x/g;
+const ADDITION = /\s*x\s*\+\s*x\s*/g;
+
 
 function parserToHtml(text) {
 	var lines = text.split('\n');
@@ -91,107 +69,17 @@ function parserToHtml(text) {
 function parser(expression) {
 	var result = "";
 
-	if (expression.match(IFELSE)){
+	if (expression.match(ADDITION)) {
 		try {
-			var IfExpr = clean(expression.match(CURLY)[0]);
-			var StateExpr = clean(expression.match(CURLY)[1]);
-			var ElseExpr = clean(expression.match(CURLY)[2]);
-			result += "If " + IfExpr + " then " + StateExpr + " Else " + ElseExpr + " EndIf\n";
+			var variables = expression.split(ADDITION);
+			for (var i = 0; i < variables.length - 1; i++)
+			{
+				result += "2x ";
+			}
+			result += "\n";
 		}
 		catch {
 		}
-	}
-	else if (expression.match(STATE)) {
-		try {
-			var StateExpr = clean(expression.split(STATE)[1]);
-			result += StateExpr + "\n";
-		}
-		catch {
-		}
-	}
-	else if (expression.match(IF)){
-		try {
-			var IfExpr = clean(expression.split(IF)[1]);
-			result += "If " + IfExpr + " then\n";
-		}
-		catch {
-		}
-	}
-	else if (expression.match(ELSE)){
-		try {
-			var ElseExpr = clean(expression.split(ELSE)[1]);
-			result += "If " + ElseExpr + "\n";
-		}
-		catch {
-		}
-	}
-	else if (expression.match(ELSIF)){
-		try {
-			var ElsifExpr = clean(expression.split(ELSIF)[1]);
-			result += "ElseIf " + ElsifExpr + "\n";
-		}
-		catch {
-		}
-	}
-	else if (expression.match(ENDIF)){
-		result += "EndIf\n";
-	}
-	else if (expression.match(FOR)){
-		result += "For" + expression.split('\\For')[1] + "\n";
-	}
-	else if (expression.match(FORALL)){
-		result += "ForAll\n";
-	}
-	else if (expression.match(ENDFOR)){
-		result += "EndFor\n";
-	}
-	else if (expression.match(WHILE)){
-		result += "While\n" + expression.split('\\While')[1] + "\n";
-	}
-	else if (expression.match(REPEAT)){
-		result += "Repeat\n" + expression.split('\\Repeat')[1] + "\n";
-	}
-	else if (expression.match(LOOP)){
-		result += "Loop\n" + expression.split('\\Loop')[1] + "\n";
-	}
-	else if (expression.match(ENDLOOP)){
-		result += "EndLoop\n";
-	}
-	else if (expression.match(REQUIRE)){
-		result += "Require\n" + expression.split('\\Require')[1] + "\n";
-	}
-	else if (expression.match(ENSURE)){
-		result += "Ensure\n" + expression.split('\\Ensure')[1] + "\n";
-	}
-	else if (expression.match(RETURN)){
-		result += "Return\n";
-	}
-	else if (expression.match(PRINT)){
-		result += "Print\n" + expression.split('\\Print')[1] + "\n";
-	}
-	else if (expression.match(COMMENT)){
-		result += "Comment\n" + expression.split('\\Comment')[1] + "\n";
-	}
-	else if (expression.match(AND)){
-		result += "And\n";
-	}
-	else if (expression.match(OR)){
-		result += "Or\n";
-	}
-	else if (expression.match(XOR)){
-		result += "Xor\n";
-	}
-	else if (expression.match(NOT)){
-		result += "Not\n";
-	}
-	else if (expression.match(TO)){
-		result += "To\n";
-	}
-	else if (expression.match(TRUE)){
-		result += "True\n";
-	}
-	else if (expression.match(FALSE)){
-		result += "False\n";
 	}
 
 	return result;
