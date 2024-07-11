@@ -3,4 +3,4 @@
 ## calculator
 calculator for algebraic geometry
 
-x + x = 2x
+x + x = 2x = 0
